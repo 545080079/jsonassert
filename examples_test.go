@@ -2,8 +2,9 @@ package jsonassert_test
 
 import (
 	"fmt"
+	"testing"
 
-	"github.com/kinbiko/jsonassert"
+	"github.com/545080079/jsonassert"
 )
 
 type printer struct{}
@@ -17,7 +18,7 @@ var t *printer
 
 func ExampleNew() {
 	ja := jsonassert.New(t)
-	ja.Assertf(`{"hello":"world"}`, `
+	ja.Assertf(true, `{"hello":"world"}`, `
 		{
 			"hello": "world"
 		}`)
@@ -25,7 +26,7 @@ func ExampleNew() {
 
 func ExampleAsserter_Assertf_formatArguments() {
 	ja := jsonassert.New(t)
-	ja.Assertf(`{"hello":"世界"}`, `
+	ja.Assertf(true, `{"hello":"世界"}`, `
 		{
 			"hello": "%s"
 		}`, "world")
@@ -35,11 +36,62 @@ func ExampleAsserter_Assertf_formatArguments() {
 
 func ExampleAsserter_Assertf_presenceOnly() {
 	ja := jsonassert.New(t)
-	ja.Assertf(`{"hi":"not the right key name"}`, `
+	ja.Assertf(true, `{"asdf":"not the right key name"}`, `
 		{
-			"hello": "<<PRESENCE>>"
+			"asdf": "<<PRESENCE>>"
 		}`)
 	//output:
 	//unexpected object key(s) ["hi"] found at '$'
 	//expected object key(s) ["hello"] missing at '$'
+}
+
+
+func TestX(t *testing.T) {
+
+	ja := jsonassert.New(t)
+	ja.Assertf(false, `{"b": 25}`, `
+		{
+			"a": "@notExists()",
+			"b": "@ >= 25"
+		}`)
+}
+
+func TestEmpty(t *testing.T) {
+
+	ja := jsonassert.New(t)
+	ja.Assertf(true, `{"a":12, "b": "1"}`, `
+		{
+			"a": "@notEmpty()",
+			"b": "@notEmpty()"
+		}`)
+}
+
+func TestLen(t *testing.T) {
+
+	ja := jsonassert.New(t)
+	ja.Assertf(true, `{"a":12, "b": "25"}`, `
+		{
+			"a": "@len() >= 1",
+			"b": "@len() < 3"
+		}`)
+}
+
+func TestExist(t *testing.T) {
+
+	ja := jsonassert.New(t)
+	ja.Assertf(true, `{"a": 111, "b": 25}`, `
+		{
+			"a": "@exists()",
+			"b": "@ >= 25"
+		}`)
+}
+
+func TestNotExists(t *testing.T) {
+
+	ja := jsonassert.New(t)
+	ja.Assertf(false, `{"b": 25}`, `
+		{
+			"a": "@notExists()",
+			"b": "@ >= 25"
+		}`)
 }

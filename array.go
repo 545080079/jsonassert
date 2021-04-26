@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (a *Asserter) checkArray(path string, act, exp []interface{}) {
+func (a *Asserter) checkArray(strictMode bool, path string, act, exp []interface{}) {
 	a.tt.Helper()
 	if len(act) != len(exp) {
 		a.tt.Errorf("length of arrays at '%s' were different. Expected array to be of length %d, but contained %d element(s)", path, len(exp), len(act))
@@ -19,7 +19,7 @@ func (a *Asserter) checkArray(path string, act, exp []interface{}) {
 		return
 	}
 	for i := range act {
-		a.pathassertf(path+fmt.Sprintf("[%d]", i), serialize(act[i]), serialize(exp[i]))
+		a.pathassertf(strictMode, path+fmt.Sprintf("[%d]", i), serialize(act[i]), serialize(exp[i]))
 	}
 }
 

@@ -100,7 +100,7 @@ will verify that the UUID field is present, but does not check its actual value.
 You may use "<<PRESENCE>>" against any type of value. The only exception is null, which
 will result in an assertion failure.
 */
-func (a *Asserter) Assertf(actualJSON, expectedJSON string, fmtArgs ...interface{}) {
+func (a *Asserter) Assertf(strictMode bool, actualJSON, expectedJSON string, fmtArgs ...interface{}) {
 	a.tt.Helper()
-	a.pathassertf("$", actualJSON, fmt.Sprintf(expectedJSON, fmtArgs...))
+	a.pathassertf(strictMode, "$", actualJSON, fmt.Sprintf(expectedJSON, fmtArgs...))
 }

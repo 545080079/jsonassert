@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (a *Asserter) pathassertf(path, act, exp string) {
+func (a *Asserter) pathassertf(strictMode bool, path, act, exp string) {
 	a.tt.Helper()
 	if act == exp {
 		return
@@ -31,6 +31,13 @@ func (a *Asserter) pathassertf(path, act, exp string) {
 		return
 	}
 
+	//新增valuate类型，只要exp类型为valuate即满足
+	if expType == jsonValuate {
+		actValuate, _ := extractValuate(act, false)
+		expValuate, _ := extractValuate(exp, true)
+		a.checkValuate(strictMode, path, actValuate, expValuate)
+		return
+	}
 	if actType != expType {
 		a.tt.Errorf("actual JSON (%s) and expected JSON (%s) were of different types at '%s'", actType, expType, path)
 		return
@@ -51,11 +58,11 @@ func (a *Asserter) pathassertf(path, act, exp string) {
 	case jsonObject:
 		actObject, _ := extractObject(act)
 		expObject, _ := extractObject(exp)
-		a.checkObject(path, actObject, expObject)
+		a.checkObject(strictMode, path, actObject, expObject)
 	case jsonArray:
 		actArray, _ := extractArray(act)
 		expArray, _ := extractArray(exp)
-		a.checkArray(path, actArray, expArray)
+		a.checkArray(strictMode, path, actArray, expArray)
 	}
 }
 
@@ -78,11 +85,15 @@ const (
 	jsonNull        jsonType = "null"
 	jsonObject      jsonType = "object"
 	jsonArray       jsonType = "array"
+	jsonValuate		jsonType = "valuate"
 	jsonTypeUnknown jsonType = "unknown"
 )
 
 func findType(j string) (jsonType, error) {
 	j = strings.TrimSpace(j)
+	if _, err := extractValuate(j, true); err == nil {
+		return jsonValuate, nil
+	}
 	if _, err := extractString(j); err == nil {
 		return jsonString, nil
 	}
