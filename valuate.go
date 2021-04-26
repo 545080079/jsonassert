@@ -38,11 +38,9 @@ const (
 
 func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[string]interface{}) {
 	a.tt.Helper()
-	fmt.Printf("[debug]path, act, exp: %v, %v, %v\n", path, act, exp)
 
 	//严格模式检查内容
 	if strictMode {
-		fmt.Println("[debug] len act, exp=", len(act), len(exp))
 		if len(act) != len(exp) {
 			a.tt.Errorf("expected %d keys at '%s' but got %d keys", len(exp), path, len(act))
 		}
@@ -94,7 +92,6 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 
 		}
 
-		fmt.Printf("[DEBUG 0]expStr:%s\n",expStr)
 		res, err := evaluate(expStr, act)
 		if err != nil || !res {
 			a.tt.Errorf("expected valuate at '%s' to be %v but was %v", path, exp, act)

@@ -11,7 +11,6 @@ func (a *Asserter) checkObject(strictMode bool, path string, act, exp map[string
 
 	//严格模式检查内容
 	if strictMode {
-		fmt.Println("[debug] len act, exp=", len(act), len(exp))
 		if len(act) != len(exp) {
 			a.tt.Errorf("expected %d keys at '%s' but got %d keys", len(exp), path, len(act))
 		}

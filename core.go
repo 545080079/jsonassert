@@ -91,7 +91,7 @@ const (
 
 func findType(j string) (jsonType, error) {
 	j = strings.TrimSpace(j)
-	if _, err := extractValuate(j, true); err == nil {
+	if _, err := extractValuate(j, true); err == nil && j != "{}" {
 		return jsonValuate, nil
 	}
 	if _, err := extractString(j); err == nil {

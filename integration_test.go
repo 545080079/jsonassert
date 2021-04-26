@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kinbiko/jsonassert"
+	"github.com/545080079/jsonassert"
 )
 
 func TestAssertf(t *testing.T) {
@@ -90,7 +90,7 @@ but expected JSON was:
 	for _, tc := range tt {
 		t.Run(tc.name, func(st *testing.T) {
 			tp, ja := setup()
-			ja.Assertf(tc.act, tc.exp)
+			ja.Assertf(true, tc.act, tc.exp)
 			if got := len(tp.messages); got != len(tc.msgs) {
 				st.Errorf("expected %d assertion message(s) but got %d", len(tc.msgs), got)
 				if len(tc.msgs) > 0 {
