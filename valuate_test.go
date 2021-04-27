@@ -9,10 +9,10 @@ import (
 func TestJsonValuate1(t *testing.T) {
 
 	ja := jsonassert.New(t)
-	ja.Assertf(false, `{"b": "abc"}`, `
+	ja.Assertf(false, `{"a":"1"}`, `
 		{
-			"a": "@exists()",
-			"b": "@len()==3"
+			"a": "1",
+			"b": "@exists()"
 		}`)
 }
 
@@ -28,7 +28,7 @@ func TestEmpty(t *testing.T) {
 	ja := jsonassert.New(t)
 	ja.Assertf(false, `{"a":12}`, `
 		{
-			"a": "@notEmpty()",
+			"a": 12,
 			"b": "@exists()"
 		}`)
 }

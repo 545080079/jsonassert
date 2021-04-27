@@ -54,7 +54,10 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 
 	for k, _ := range exp {
 		//获取用户输入的valuate表达式
-		expStr := exp[k].(string)
+		expStr := processInput(exp[k])
+		if expStr == "" && exp[k] != "" {
+			a.tt.Errorf(`expected act type is string or float64 at '%s', but not.`, path)
+		}
 
 		if strings.HasPrefix(expStr, preFlagNotExists) {
 			if _, ok := act[k]; ok {
@@ -73,7 +76,7 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 
 		//处理实际输入
 		actValue := processInput(act[k])
-		if actValue == "" {
+		if actValue == "" && act[k] != nil {
 			a.tt.Errorf(`expected act type is string or float64 at '%s', but not.`, path)
 		}
 
@@ -86,10 +89,12 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 			// '@len()' --> len(actValue)
 			expStr = strings.Replace(expStr, preFlagLen, strconv.Itoa(len(actValue)), -1)
 
-		} else {
+		} else if strings.HasPrefix(expStr, "@") {
 			//	'@' --> act key
 			expStr = strings.Replace(expStr, preFlag, k, -1)
 
+		} else {
+			expStr = expStr + "==" + actValue
 		}
 
 		res, err := evaluate(expStr, act)
@@ -119,11 +124,14 @@ func extractValuate(s string, isExp bool) (map[string]interface{}, error) {
 	for _, v := range arr {
 		value, valueType := v.(string)
 		if isExp && !valueType {
-			return nil, fmt.Errorf("this field is not valuate")
+			continue
 		}
-		if isExp && value[0] != preFlag[0] {
-			return nil, fmt.Errorf("this field is not valuate")
+		if isExp && value[0] == preFlag[0] {
+			return arr, err
 		}
+	}
+	if isExp {
+		return nil, fmt.Errorf("this field is not valuate")
 	}
 	return arr, err
 }
@@ -154,6 +162,9 @@ func evaluate(expStr string, act map[string]interface{}) (bool, error) {
 
 //校验输入, 如果是float64, 转为string
 func processInput(input interface{}) string {
+	if input == nil {
+		return ""
+	}
 	_, t1 := input.(float64)
 	_, t2 := input.(string)
 	if !t1 && !t2 {
