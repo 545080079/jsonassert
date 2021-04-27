@@ -167,11 +167,15 @@ func processInput(input interface{}) string {
 	}
 	_, t1 := input.(float64)
 	_, t2 := input.(string)
-	if !t1 && !t2 {
+	_, t3 := input.(bool)
+	if !t1 && !t2 && !t3 {
 		return ""
 	}
 	if t1 {
 		return strconv.FormatFloat(input.(float64), 'f', -1, 64)
+	}
+	if t3 {
+		return strconv.FormatBool(input.(bool))
 	}
 	return input.(string)
 }
