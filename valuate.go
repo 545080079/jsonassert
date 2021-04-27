@@ -52,7 +52,7 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 		}
 	}
 
-	for k, v := range act {
+	for k, _ := range exp {
 		//获取用户输入的valuate表达式
 		expStr := exp[k].(string)
 
@@ -72,7 +72,7 @@ func (a *Asserter) checkValuate(strictMode bool, path string, act, exp map[strin
 		}
 
 		//处理实际输入
-		actValue := processInput(v)
+		actValue := processInput(act[k])
 		if actValue == "" {
 			a.tt.Errorf(`expected act type is string or float64 at '%s', but not.`, path)
 		}

@@ -11,7 +11,7 @@ func TestJsonValuate1(t *testing.T) {
 	ja := jsonassert.New(t)
 	ja.Assertf(false, `{"b": "abc"}`, `
 		{
-			"a": "@notExists()",
+			"a": "@exists()",
 			"b": "@len()==3"
 		}`)
 }
@@ -26,20 +26,21 @@ func TestJsonValuate2(t *testing.T) {
 func TestEmpty(t *testing.T) {
 
 	ja := jsonassert.New(t)
-	ja.Assertf(true, `{"a":12, "b": "1"}`, `
+	ja.Assertf(false, `{"a":12}`, `
 		{
 			"a": "@notEmpty()",
-			"b": "@notEmpty()"
+			"b": "@exists()"
 		}`)
 }
 
 func TestLen(t *testing.T) {
 
 	ja := jsonassert.New(t)
-	ja.Assertf(true, `{"a":12, "b": "25"}`, `
+	ja.Assertf(false, `{"a":12, "b":3324}`, `
 		{
 			"a": "@len() >= 1",
-			"b": "@len() < 3"
+			"b": "@len() > 3",
+			"c": "@len() > 3"
 		}`)
 }
 
